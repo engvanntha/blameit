@@ -1,5 +1,6 @@
 {
   "name": "blameit",
+  "publisher": "engvanntha",
   "displayName": "BlameIt",
   "description": "BlameIt displays Git blame information inline for every visible line of code in VS Code. It helps developers quickly identify code ownership without hovering, opening another panel, or moving the cursor.",
   "version": "0.0.1",
@@ -10,9 +11,26 @@
     "onStartupFinished"
   ],
   "categories": [
-    "Other"
+    "Other",
+    "SCM Providers"
+  ],
+  "keywords": [
+    "git",
+    "blame",
+    "inline",
+    "ownership",
+    "history",
+    "scm"
   ],
   "main": "./out/src/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/engvanntha/blameit.git"
+  },
+  "homepage": "https://github.com/engvanntha/blameit#readme",
+  "bugs": {
+    "url": "https://github.com/engvanntha/blameit/issues"
+  },
   "contributes": {},
   "scripts": {
     "compile": "tsc -p ./",
@@ -22,12 +40,13 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.125.0",
+    "@types/vscode": "^1.105.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "24.x",
     "eslint": "^10.5.0",
     "mocha": "^11.7.6",
     "typescript": "^5.9.2",
+    "@vscode/vsce": "^3.6.2",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
     "@vscode/test-cli": "^0.0.15",
