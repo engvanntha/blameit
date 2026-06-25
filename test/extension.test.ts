@@ -1,11 +1,32 @@
 import * as assert from "node:assert";
-import * as vscode from "vscode";
+import { parseBlamePorcelain } from "../src/git";
 
-suite("Extension Test Suite", () => {
-	void vscode.window.showInformationMessage("Start all tests.");
+suite("git parser", () => {
+    test("extracts one author per blamed line", () => {
+        const output = [
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1 1 1",
+            "author Alice",
+            "summary Add first line",
+            "\tconst a = 1;",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 2 2 1",
+            "author Bob",
+            "summary Add second line",
+            "\tconst b = 2;",
+        ].join("\n");
 
-	test("Sample test", () => {
-		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
-		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
-	});
+        assert.deepStrictEqual(parseBlamePorcelain(output), [
+            {
+                author: "Alice",
+                commit: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                lineNumber: 1,
+                summary: "Add first line",
+            },
+            {
+                author: "Bob",
+                commit: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                lineNumber: 2,
+                summary: "Add second line",
+            },
+        ]);
+    });
 });

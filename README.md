@@ -1,65 +1,59 @@
-# blameit README
+# BlameIt
 
-This is the README for your extension "blameit". After writing up a brief description, we recommend including the following sections.
+Display Git blame information inline for every visible line of code in Visual Studio Code.
 
-## Features
+## Overview
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+BlameIt is a lightweight Visual Studio Code extension that renders the Git author for every visible line directly in the editor. Instead of showing blame information only for the current cursor line, BlameIt gives you a broader view of code ownership across the part of the file you are actually reading.
 
-For example if there is an image subfolder under your extension project workspace:
+This helps you:
 
-\!\[feature X\]\(images/feature-x.png\)
+- Identify who last modified each visible line.
+- Review ownership patterns while reading code.
+- Navigate unfamiliar files with less context switching.
+- Avoid opening Git history or hovering line by line.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Current Features
 
-## Requirements
+- Displays the Git author beside every visible line.
+- Refreshes while scrolling, switching files, editing, and saving.
+- Only requests blame for visible ranges.
+- Uses inline decorations via the VS Code Decoration API.
+- Works with file-backed documents inside Git repositories.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## How It Works
 
-## Extension Settings
+1. Detect the visible line ranges in the active editor.
+2. Run `git blame --line-porcelain` only for those line ranges.
+3. Parse the author metadata from Git output.
+4. Render each author inline at the end of its line.
+5. Refresh decorations when the visible viewport changes.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## Example
 
-For example:
+```ts
+function login(user) {          Alice
+    validate(user);             Alice
+    authenticate(user);         Bob
+    return true;                Charlie
+}
+```
 
-This extension contributes the following settings:
+## Planned Features
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+- Commit message summary.
+- Relative commit time.
+- Commit hash tooltip.
+- Author avatars.
+- Color-coded authors.
+- Configurable display format.
+- Smarter caching and batching.
 
-## Known Issues
+## Development
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+```bash
+npm install
+npm run compile
+```
 
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Use `F5` in VS Code to launch the extension development host.

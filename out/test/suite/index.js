@@ -32,35 +32,41 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert = __importStar(require("node:assert"));
-const git_1 = require("../src/git");
-suite("git parser", () => {
-    test("extracts one author per blamed line", () => {
-        const output = [
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1 1 1",
-            "author Alice",
-            "summary Add first line",
-            "\tconst a = 1;",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 2 2 1",
-            "author Bob",
-            "summary Add second line",
-            "\tconst b = 2;",
-        ].join("\n");
-        assert.deepStrictEqual((0, git_1.parseBlamePorcelain)(output), [
-            {
-                author: "Alice",
-                commit: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                lineNumber: 1,
-                summary: "Add first line",
-            },
-            {
-                author: "Bob",
-                commit: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-                lineNumber: 2,
-                summary: "Add second line",
-            },
-        ]);
+exports.run = run;
+const fs = __importStar(require("node:fs/promises"));
+const path = __importStar(require("node:path"));
+const mocha_1 = __importDefault(require("mocha"));
+async function collectTestFiles(dir) {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    const files = await Promise.all(entries.map(async (entry) => {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            return collectTestFiles(fullPath);
+        }
+        return entry.name.endsWith(".test.js") ? [fullPath] : [];
+    }));
+    return files.flat().sort();
+}
+async function run() {
+    const mocha = new mocha_1.default({
+        color: true,
+        ui: "tdd",
     });
-});
-//# sourceMappingURL=extension.test.js.map
+    const testsRoot = path.resolve(__dirname, "..");
+    const testFiles = await collectTestFiles(testsRoot);
+    testFiles.forEach((file) => mocha.addFile(file));
+    await new Promise((resolve, reject) => {
+        mocha.run((failures) => {
+            if (failures > 0) {
+                reject(new Error(`${failures} tests failed.`));
+                return;
+            }
+            resolve();
+        });
+    });
+}
+//# sourceMappingURL=index.js.map

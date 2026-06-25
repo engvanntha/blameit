@@ -33,34 +33,25 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert = __importStar(require("node:assert"));
-const git_1 = require("../src/git");
-suite("git parser", () => {
-    test("extracts one author per blamed line", () => {
-        const output = [
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1 1 1",
-            "author Alice",
-            "summary Add first line",
-            "\tconst a = 1;",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 2 2 1",
-            "author Bob",
-            "summary Add second line",
-            "\tconst b = 2;",
-        ].join("\n");
-        assert.deepStrictEqual((0, git_1.parseBlamePorcelain)(output), [
-            {
-                author: "Alice",
-                commit: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                lineNumber: 1,
-                summary: "Add first line",
-            },
-            {
-                author: "Bob",
-                commit: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-                lineNumber: 2,
-                summary: "Add second line",
-            },
-        ]);
-    });
-});
-//# sourceMappingURL=extension.test.js.map
+const path = __importStar(require("node:path"));
+const test_electron_1 = require("@vscode/test-electron");
+async function main() {
+    try {
+        const extensionDevelopmentPath = path.resolve(__dirname, "..", "..");
+        const extensionTestsPath = path.resolve(__dirname, "suite", "index.js");
+        await (0, test_electron_1.runTests)({
+            extensionDevelopmentPath,
+            extensionTestsPath,
+            launchArgs: ["--disable-extensions"],
+        });
+    }
+    catch (error) {
+        console.error("Failed to run extension tests");
+        if (error instanceof Error) {
+            console.error(error.message);
+        }
+        process.exit(1);
+    }
+}
+void main();
+//# sourceMappingURL=runTest.js.map
